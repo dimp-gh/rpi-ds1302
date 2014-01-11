@@ -150,17 +150,17 @@ unsigned char from_bcd(unsigned char decimal) {
 }
 
 static PyObject *
-py_ds1302_get_time_str(PyObject * self, PyObject * args) {
+py_ds1302_get_time_str(PyObject *self, PyObject *args) {
 	return PyString_FromString(rtc_read_time_str());
 }
 
 static PyObject *
-py_ds1302_get_date_str(PyObject * self, PyObject * args) {
+py_ds1302_get_date_str(PyObject *self, PyObject *args) {
 	return PyString_FromString(rtc_read_date_str());
 }
 
 static PyObject *
-py_ds1302_set_date(PyObject * self, PyObject * args) {
+py_ds1302_set_date(PyObject *self, PyObject *args) {
 	const unsigned char date, month;
 	const unsigned int year;
 	if (!PyArg_ParseTuple(args, "ibb", &year, &month, &date))
@@ -172,7 +172,7 @@ py_ds1302_set_date(PyObject * self, PyObject * args) {
 }
 
 static PyObject *
-py_ds1302_set_time(PyObject * self, PyObject * args) {
+py_ds1302_set_time(PyObject *self, PyObject *args) {
 	const unsigned char hour, min, sec;
 	if (!PyArg_ParseTuple(args, "bbb", &hour, &min, &sec))
 		return NULL;
@@ -183,7 +183,7 @@ py_ds1302_set_time(PyObject * self, PyObject * args) {
 }
 
 static PyObject *
-py_ds1302_get_date(PyObject * self, PyObject * args) {
+py_ds1302_get_date(PyObject *self, PyObject *args) {
 	unsigned int year, month, date;
 	year = 2000 + from_bcd(time_get(RTC_YEAR));
 	month = from_bcd(time_get(RTC_MONTH));
@@ -192,7 +192,7 @@ py_ds1302_get_date(PyObject * self, PyObject * args) {
 }
 
 static PyObject *
-py_ds1302_get_time(PyObject * self, PyObject * args) {
+py_ds1302_get_time(PyObject *self, PyObject *args) {
 	unsigned char hour, min, sec;
 	hour = from_bcd(time_get(RTC_HOUR));
 	min = from_bcd(time_get(RTC_MIN));
@@ -201,8 +201,22 @@ py_ds1302_get_time(PyObject * self, PyObject * args) {
 }
 
 static PyObject *
-py_ds1302_reset_clock(PyObject * self, PyObject * args) {
+py_ds1302_reset_clock(PyObject *self, PyObject *args) {
 	rtc_reset();
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+py_ds1302_init_clock(PyObject *self, PyObject *args) {
+	// configure pins
+	pinMode(PinRst,OUTPUT);
+	digitalWrite(PinRst,LOW);
+	pinMode(PinClk,OUTPUT);
+	digitalWrite(PinClk,LOW);
+	pinMode(PinDat,OUTPUT);
+	digitalWrite(PinDat,LOW);
+	//remove write protection
+	rtc_wp();
 	Py_RETURN_NONE;
 }
 
@@ -215,23 +229,13 @@ static PyMethodDef ds1302Methods[] = {
 	{"set_date", py_ds1302_set_date, METH_VARARGS, "Set date (year, month, date)"},
 	{"set_time", py_ds1302_set_time, METH_VARARGS, "Set time (hour, minute, second)"},
 	{"reset_clock", py_ds1302_reset_clock, METH_VARARGS, "Reset RTC clock"},
+	{"init_clock", py_ds1302_init_clock, METH_VARARGS, "Init RTC clock (disable write protection)"},
 	{NULL, NULL, 0, NULL}
 };
 
 PyMODINIT_FUNC
 initds1302(void) {
-	PyObject * module = Py_InitModule("ds1302", ds1302Methods);
-	//PyModule_AddIntConstant(module, "RTC_SEC", RTC_SEC);
+	PyObject *module = Py_InitModule("ds1302", ds1302Methods);
 
 	if (wiringPiSetup() == -1) exit (1) ;
-	
-	//init
-	pinMode(PinRst,OUTPUT);
-	digitalWrite(PinRst,LOW);
-	pinMode(PinClk,OUTPUT);
-	digitalWrite(PinClk,LOW);
-	pinMode(PinDat,OUTPUT);
-	digitalWrite(PinDat,LOW);
-	
-	rtc_wp(); //remove write protect
 }
