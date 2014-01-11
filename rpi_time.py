@@ -37,7 +37,7 @@ class DS1302:
 							hour, minute, second)
 
 
-	def set_rtc_datetime(self, dt):
+	def set_datetime(self, dt):
 		if not self.check_sanity():
 			return False
 		ds1302.set_date(dt.year, dt.month, dt.day)
