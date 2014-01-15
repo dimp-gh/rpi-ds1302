@@ -104,7 +104,7 @@ void rtc_reset() {
 	time_set(RTC_HOUR, 0x0);
 	time_set(RTC_DATE, 0x01);
 	time_set(RTC_MONTH, 0x01);
-	time_set(RTC_YEAR, 0x0);
+	time_set(RTC_YEAR, 0x1);
 }
 
 char *rtc_read_time_str() {
