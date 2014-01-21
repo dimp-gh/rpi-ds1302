@@ -1,18 +1,23 @@
 rpi-ds1302
 ==========
 
-Python module for using DS1302 RTC unit with Raspberry Pi.
+Python library for using DS1302 RTC unit with Raspberry Pi.
 
 Depends on `WiringPi` library.
 
 TODO:
 - split C / CPython / Python code
-- way to set up RTC pins from Python interface
+- way to set up RTC pins from Python code
 
 Usage
 -------
 
-There are two ways of using RTC clock.
+Currently you have to connect RTC unit to the following RPi pins (you can read about RPi pin numbering [here](http://wiringpi.com/pins/), this library uses wiringPi pin numbering):
+* CLK pin (also can be named SCLK) goes to RPi pin 4.
+* DAT pin (sometimes it is named I/O) goes to RPi pin 5.
+* RST pin goes to RPi pin 6.
+
+There are two ways of using RTC unit from Python code.
 
 *Low-level* access procedures are implemented `ds1302` module.
 ```python
