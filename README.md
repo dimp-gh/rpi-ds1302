@@ -19,7 +19,7 @@ Currently you have to connect RTC unit to the following RPi pins (you can read a
 
 There are two ways of using RTC unit from Python code.
 
-*Low-level* access procedures are implemented `ds1302` module.
+*Low-level* access procedures are implemented in `ds1302` module.
 ```python
 >>> import ds1302
 >>> ds1302.get_date()
